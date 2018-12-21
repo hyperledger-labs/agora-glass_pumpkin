@@ -53,7 +53,7 @@ fn main() {
 
 # Prime Generation
 
-`Primes` are generated similarly to OpenSSL except it applies some recommendations from the [Prime and Prejudice](https://eprint.iacr.org/2018/749.pdf):
+`Primes` are generated similarly to OpenSSL except it applies some recommendations from the [Prime and Prejudice](https://eprint.iacr.org/2018/749.pdf) paper:
 
 1. Generate a random odd number of a given bit-length.
 1. Divide the candidate by the first 2048 prime numbers
