@@ -58,4 +58,4 @@ fn main() {
 1. Generate a random odd number of a given bit-length.
 1. Divide the candidate by the first 2048 prime numbers
 1. Test the candidate with Fermat's Theorem.
-1. Runs log2(bitlenth) + 5 Miller-Rabin tests.
+1. Runs log2(bitlength) + 5 Miller-Rabin tests.
