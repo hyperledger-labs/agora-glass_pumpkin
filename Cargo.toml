@@ -1,0 +1,12 @@
+[package]
+name = "glass_pumpkin"
+version = "0.1.0"
+authors = ["Michael Lodder <redmike7@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+num-bigint = { version = "0.2", features = ["rand"] }
+num-traits = "0.2"
+num-integer = "0.1"
+int_traits = "0.1"
+rand = "0.6"
