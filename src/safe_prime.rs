@@ -21,3 +21,16 @@ pub fn new(bit_length: usize) -> Result {
         Ok(from_rng(bit_length, &mut rng)?)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{new, check};
+
+    #[test]
+    fn tests() {
+        for bits in [128, 256, 512, 1024].iter() {
+            let n = new(*bits).unwrap();
+            assert!(check(&n));
+        }
+    }
+}
