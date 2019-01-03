@@ -4,7 +4,7 @@ A random number generator for generating large prime numbers, suitable for crypt
 # Purpose
 `glass_pumpkin` is a cryptographically-secure, random number generator, useful for generating large prime numbers.
 This library was inspired by [pumpkin](https://github.com/zcdziura/pumpkin) except its meant to be used with rust stable.
-It also lowers the 512-bit restriction to 32 bits so these can be generated and used for elliptic curve prime fields.
+It also lowers the 512-bit restriction to 128 bits so these can be generated and used for elliptic curve prime fields.
 It exposes the prime testing functions as well.
 This crate uses [num-bigint](https://crates.io/crates/num-bigint) instead of `ramp`. The downside is performance.
 When `ramp` no longer requires rust nightly, then this crate can possibly be replace with pumpkin.

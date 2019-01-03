@@ -8,7 +8,7 @@ use rand::thread_rng;
 
 use crate::error::{Error, Result};
 
-pub const MIN_BIT_LENGTH: usize = 32;
+pub const MIN_BIT_LENGTH: usize = 128;
 
 static PRIMES: [u32; 2047] = [
     3,     5,     7,    11,    13,    17,    19,

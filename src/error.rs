@@ -2,6 +2,7 @@
 
 use rand;
 use std::{error, fmt, result};
+use crate::common::MIN_BIT_LENGTH;
 
 /// Default result struct
 pub type Result = result::Result<num_bigint::BigUint, Error>;
@@ -22,7 +23,7 @@ impl fmt::Display for Error {
                 write!(f, "Error initializing OS random number generator: {}", err)
             },
             Error::BitLength(length) => {
-                write!(f, "The given bit length is too small; must be at least 32: {}", length)
+                write!(f, "The given bit length is too small; must be at least {}: {}", MIN_BIT_LENGTH, length)
             }
         }
     }
@@ -32,7 +33,7 @@ impl error::Error for Error {
     fn description(&self) -> &str {
         match *self {
             Error::OsRngInitialization(ref err) => err.description(),
-            Error::BitLength(_) => "The given bit length was less than 32"
+            Error::BitLength(_) => "The given bit length was less than 128"
         }
     }
 }
