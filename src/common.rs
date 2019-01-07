@@ -11,7 +11,7 @@ use crate::error::{Error, Result};
 pub const MIN_BIT_LENGTH: usize = 128;
 
 static PRIMES: [u32; 2047] = [
-    3,     5,     7,    11,    13,    17,    19,
+        3,     5,     7,    11,    13,    17,    19,
        23,    29,    31,    37,    41,    43,    47,    53,
        59,    61,    67,    71,    73,    79,    83,    89,
        97,   101,   103,   107,   109,   113,   127,   131,
@@ -351,9 +351,9 @@ pub fn is_prime(candidate: &BigUint) -> bool {
         return false;
     }
 
-    for p in PRIMES.into_iter() {
+    for p in PRIMES.iter() {
         if candidate % *p == BigUint::zero() {
-            return false;
+            return *candidate == BigUint::from(*p);
         }
     }
 
@@ -423,7 +423,7 @@ fn rewrite(candidate: &BigUint) -> (u64, BigUint) {
 
 #[cfg(test)]
 mod tests {
-    use super::{is_prime, is_safe_prime, gen_prime, gen_safe_prime};
+    use super::{is_prime, is_safe_prime, gen_prime, gen_safe_prime, PRIMES};
     use crate::error::Error;
     use num_bigint::BigUint;
     use num_traits::Num;
@@ -465,6 +465,10 @@ mod tests {
 
     #[test]
     fn is_prime_tests() {
+        for prime in PRIMES.iter() {
+            assert!(is_prime(&BigUint::from(*prime)));
+        }
+
         let mut n = BigUint::from(18088387217903330459u64);
         assert!(!is_prime(&(n.clone() >> 1)));
         assert!(is_prime(&n));
