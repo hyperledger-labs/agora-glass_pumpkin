@@ -2,8 +2,11 @@
 name = "glass_pumpkin"
 version = "0.2.0"
 description = "A cryptographically secure prime number generator based on rust's own num-bigint and num-integer"
+keywords = ["prime", "big", "cryptography", "generator", "number"]
 license = "Apache-2.0"
 authors = ["Michael Lodder <redmike7@gmail.com>"]
+repository = "https://github.com/mikelodder7/glass_pumpkin"
+readme = "README.md"
 edition = "2018"
 
 [dependencies]
