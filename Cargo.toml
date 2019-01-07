@@ -1,6 +1,6 @@
 [package]
 name = "glass_pumpkin"
-version = "0.1.0"
+version = "0.2.0"
 description = "A cryptographically secure prime number generator based on rust's own num-bigint and num-integer"
 license = "Apache-2.0"
 authors = ["Michael Lodder <redmike7@gmail.com>"]
