@@ -1,4 +1,4 @@
-use num_bigint::{BigUint, BigInt, RandBigInt};
+use num_bigint::{BigUint, RandBigInt};
 use num_traits::identities::{One, Zero};
 use int_traits::IntTraits;
 use num_integer::Integer;
@@ -343,7 +343,7 @@ pub fn is_safe_prime(candidate: &BigUint) -> bool {
 /// 3- Perform log2(bitlength) + 5 rounds of Miller-Rabin
 ///    depending on the number of bits
 pub fn is_prime(candidate: &BigUint) -> bool {
-    if candidate == BigUint::from(2u32) {
+    if *candidate == BigUint::from(2u32) {
         return true;
     }
 
