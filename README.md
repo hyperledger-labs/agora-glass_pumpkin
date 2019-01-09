@@ -31,7 +31,7 @@ fn main() {
 ```
 
 You can also supply `OsRng` and generate primes from that.
-```
+```rust
 extern crate glass_pumpkin;
 extern crate rand;
 
@@ -64,7 +64,7 @@ Safe primes require (n-1)/2 also be prime.
 # Prime Checking
 
 You can use this crate to check numbers for primality.
-```
+```rust
 extern crate glass_pumpkin;
 extern crate num_bigint;
 
