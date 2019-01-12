@@ -111,7 +111,7 @@ fn _is_prime(candidate: &BigUint, checks: usize, force2: bool) -> bool {
         return true;
     }
 
-    if candidate.is_even() {
+    if candidate.is_even() || candidate.is_one() {
         return false;
     }
 
@@ -154,7 +154,7 @@ fn miller_rabin(candidate: &BigUint, mut limit: usize, force2: bool) -> bool {
     // Perform the Miller-Rabin test on the candidate, 'limit' times.
     let (trials, d) = rewrite(candidate);
 
-    let cand_minus_one = candidate - BigUint::one();
+    let cand_minus_one = candidate - 1u32;
 
     let mut bases = ::std::collections::LinkedList::new();
 
@@ -190,7 +190,7 @@ fn miller_rabin(candidate: &BigUint, mut limit: usize, force2: bool) -> bool {
 
 /// Compute `d` and `trials`
 fn rewrite(candidate: &BigUint) -> (u64, BigUint) {
-    let mut d = candidate - BigUint::one();
+    let mut d = candidate - 1u32;
     let mut trials = 0;
 
     while d.is_odd() {
@@ -202,17 +202,6 @@ fn rewrite(candidate: &BigUint) -> (u64, BigUint) {
 }
 
 fn lucas(n: &BigUint) -> bool {
-    // println!("lucas: {}", n);
-    // Discard 0, 1.
-    if n.is_zero() || n.is_one() {
-        return false;
-    }
-
-    // Two is the only even prime.
-    if n == &BigUint::from(2u8) {
-        return false;
-    }
-
     // Baillie-OEIS "method C" for choosing D, P, Q,
     // as in https://oeis.org/A217719/a217719.txt:
     // try increasing P ≥ 3 such that D = P² - 4 (so Q = 1)
@@ -266,10 +255,10 @@ fn lucas(n: &BigUint) -> bool {
     // We know gcd(n, 2) = 1 because n is odd.
     //
     // Arrange s = (n - Jacobi(Δ, n)) / 2^r = (n+1) / 2^r.
-    let mut s = n + BigUint::one();
+    let mut s = n + 1u32;
     let r = trailing_zeros(&s);
     s >>= r;
-    let nm2 = n - &BigUint::from(2u8); // n - 2
+    let nm2 = n - 2u32; // n - 2
 
     // We apply the "almost extra strong" test, which checks the above conditions
     // except for U_s ≡ 0 mod n, which allows us to avoid computing any U_k values.
@@ -359,7 +348,7 @@ fn lucas(n: &BigUint) -> bool {
 
         // k' = 2k
         // V(k') = V(2k) = V(k)² - 2
-        let t1 = (&vk * &vk) - &BigUint::from(2u8);
+        let t1 = (&vk * &vk) - 2u32;
         vk = &t1 % n;
     }
 
@@ -370,7 +359,7 @@ fn lucas(n: &BigUint) -> bool {
 fn trailing_zeros<B: Clone + Integer + std::ops::ShrAssign<usize>>(n: &B) -> usize {
     let mut i = 0usize;
     let mut t = n.clone();
-    while t.is_odd() {
+    while t.is_even() {
         i += 1;
         t >>= 1_usize;
     }
