@@ -2,8 +2,7 @@
 
 use rand::rngs::OsRng;
 
-pub use crate::common::gen_safe_prime as from_rng;
-pub use crate::common::is_safe_prime as check;
+pub use crate::common::{gen_safe_prime as from_rng, is_safe_prime as check, is_safe_prime_baillie_psw as strong_check};
 use crate::common::MIN_BIT_LENGTH;
 use crate::error::{Error, Result};
 
