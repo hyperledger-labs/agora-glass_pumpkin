@@ -12,7 +12,7 @@
 //! 1. Generate a random odd number of a given bit-length.
 //! 2. Divide the candidate by the first 2048 prime numbers
 //! 3. Test the candidate with Fermat's Theorem.
-//! 4. Runs log2(bits) + 5 Miller-Rabin tests.
+//! 4. Runs Baillie-PSW test with log2(bits) + 5 Miller-Rabin tests
 
 #[macro_use]
 extern crate lazy_static;

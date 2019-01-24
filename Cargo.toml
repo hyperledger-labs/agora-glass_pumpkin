@@ -1,6 +1,6 @@
 [package]
 name = "glass_pumpkin"
-version = "0.3.1"
+version = "0.3.2"
 description = "A cryptographically secure prime number generator based on rust's own num-bigint and num-integer"
 keywords = ["prime", "big", "cryptography", "generator", "number"]
 license = "Apache-2.0"
@@ -16,3 +16,10 @@ num-traits = "0.2"
 num-integer = "0.1"
 rand = "0.6"
 lazy_static = "1.2"
+
+[dev-dependencies]
+criterion = "0.2"
+
+[[bench]]
+name = "gen_safe_prime"
+harness = false

@@ -16,7 +16,6 @@ pub fn gen_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result {
     if bit_length < MIN_BIT_LENGTH {
         Err(Error::BitLength(bit_length))
     } else {
-        let mask = &BigUint::from(3u8) << (bit_length - 2) | BigUint::one();
         let checks = required_checks(bit_length);
         let mut candidate;
 
@@ -24,9 +23,9 @@ pub fn gen_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result {
             candidate = rng.gen_biguint(bit_length);
 
             //Set the top two bits and lowest bit
-            candidate |= &mask;
+            candidate |= BigUint::one();
 
-            if _is_prime(&candidate, checks, false) {
+            if _is_prime(&candidate, checks, true) && lucas(&candidate) {
                 return Ok(candidate)
             }
         }
@@ -47,17 +46,17 @@ pub fn gen_safe_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result
         loop {
             candidate = gen_prime(bit_length, rng)?;
 
-            if is_safe_prime(&candidate) {
+            if _is_safe_prime(&candidate, checks, true) &&
+               lucas(&candidate) {
                 break;
             }
 
             candidate <<= 1_usize;
             candidate += 1_usize;
 
-            if (&candidate % &three) == two {
-                if _is_prime(&candidate, checks, false) {
-                    break;
-                }
+            if (&candidate % &three) == two &&
+                _is_prime(&candidate, checks, false) && lucas(&candidate) {
+                break;
             }
         }
 
@@ -67,31 +66,30 @@ pub fn gen_safe_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result
 
 /// Checks if number is a prime using the Baillie-PSW test
 pub fn is_prime_baillie_psw(candidate: &BigUint) -> bool {
-    _is_prime(candidate, required_checks(candidate.bits()), true) || lucas(candidate)
+    _is_prime(candidate, required_checks(candidate.bits()), true) && lucas(candidate)
 }
 
 /// Checks if number is a safe prime using the Baillie-PSW test
 pub fn is_safe_prime_baillie_psw(candidate: &BigUint) -> bool {
-    _is_safe_prime(candidate, true)
+    _is_safe_prime(candidate, required_checks(candidate.bits()), true) && lucas(&candidate)
 }
 
 /// Checks if number is a safe prime
 pub fn is_safe_prime(candidate: &BigUint) -> bool {
-    _is_safe_prime(candidate, false)
+    _is_safe_prime(candidate, required_checks(candidate.bits()), false)
 }
 
 /// Common function for is_safe_prime
-fn _is_safe_prime(candidate: &BigUint, force2: bool) -> bool {
+fn _is_safe_prime(candidate: &BigUint, checks: usize, force2: bool) -> bool {
     // according to https://eprint.iacr.org/2003/186.pdf
     // a safe prime is congruent to 2 mod 3
-    if (candidate % &BigUint::from(3u8)) == BigUint::from(2u8) {
-        let checks = (candidate.bits() as f64).log2() as usize;
-        if _is_prime(&candidate, checks, force2) {
+    if (candidate % &BigUint::from(3u8)) == BigUint::from(2u8) &&
+        _is_prime(&candidate, checks, force2) {
             // a safe prime satisfies (p-1)/2 is prime. Since a
             // prime is odd, We just need to divide by 2
             return _is_prime(&(candidate >> 1), checks, force2);
         }
-    }
+
     false
 }
 
@@ -144,7 +142,7 @@ fn required_checks(bits: usize) -> usize {
 fn fermat(candidate: &BigUint) -> bool {
     let random = thread_rng().gen_biguint_range(&BigUint::one(), candidate);
 
-    let result = random.modpow(&(candidate - BigUint::one()), &candidate);
+    let result = random.modpow(&(candidate - 1u8), &candidate);
 
     result.is_one()
 }
@@ -168,16 +166,16 @@ fn miller_rabin(candidate: &BigUint, mut limit: usize, force2: bool) -> bool {
     }
 
     'nextbasis: for basis in bases {
-        let mut x = basis.modpow(&d, &candidate);
+        let mut test = basis.modpow(&d, &candidate);
 
-        if x.is_one() || x == cand_minus_one {
+        if test.is_one() || test == cand_minus_one {
             continue;
         } else {
             for _ in 1..trials - 1 {
-                x = x.modpow(&TWO, &candidate);
-                if x.is_one() {
+                test = test.modpow(&TWO, &candidate);
+                if test.is_one() {
                     return false;
-                } else if x == cand_minus_one {
+                } else if test == cand_minus_one {
                     break 'nextbasis;
                 }
             }
@@ -368,6 +366,7 @@ fn trailing_zeros<B: Clone + Integer + std::ops::ShrAssign<usize>>(n: &B) -> usi
 
 /// Jacobi returns the Jacobi symbol (x/y), either +1, -1, or 0.
 /// The y argument must be an odd integer.
+#[allow(clippy::many_single_char_names)]
 fn jacobi(x: &BigInt, y: &BigInt) -> isize {
     if !y.is_odd() {
         panic!(
@@ -708,7 +707,7 @@ fn gen_primes() -> Vec<BigUint> {
 
 #[cfg(test)]
 mod tests {
-    use super::{is_prime, is_safe_prime, is_prime_baillie_psw, gen_prime, gen_safe_prime, PRIMES};
+    use super::{is_prime, is_safe_prime, is_prime_baillie_psw, is_safe_prime_baillie_psw, gen_prime, gen_safe_prime, PRIMES};
     use crate::error::Error;
     use num_bigint::BigUint;
     use num_traits::Num;
@@ -727,7 +726,7 @@ mod tests {
 
         for bits in [128, 256, 512, 1024].iter() {
             let n = gen_safe_prime(*bits, &mut rng).unwrap();
-            assert!(is_safe_prime(&n));
+            assert!(is_safe_prime_baillie_psw(&n));
         }
     }
 

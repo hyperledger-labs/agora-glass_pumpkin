@@ -23,13 +23,14 @@ pub fn new(bit_length: usize) -> Result {
 
 #[cfg(test)]
 mod tests {
-    use super::{new, check};
+    use super::{new, check, strong_check};
 
     #[test]
     fn tests() {
         for bits in [128, 256, 512, 1024].iter() {
             let n = new(*bits).unwrap();
             assert!(check(&n));
+            assert!(strong_check(&n));
         }
     }
 }
