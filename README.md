@@ -1,4 +1,7 @@
 # Glass Pumpkin
+
+[![Build Status](https://travis-ci.org/mikelodder7/glass_pumpkin.svg?branch=master)](https://travis-ci.org/mikelodder7/glass_pumpkin)
+
 A random number generator for generating large prime numbers, suitable for cryptography.
 
 # Purpose
