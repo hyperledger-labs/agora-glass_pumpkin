@@ -27,7 +27,7 @@ mod tests {
 
     #[test]
     fn tests() {
-        for bits in [128, 256, 512, 1024].iter() {
+        for bits in [128, 256, 384].iter() {
             let n = new(*bits).unwrap();
             assert!(check(&n));
             assert!(strong_check(&n));
