@@ -16,7 +16,7 @@
 
 #[macro_use]
 extern crate lazy_static;
-extern crate num_bigint;
+pub extern crate num_bigint;
 extern crate num_traits;
 extern crate num_integer;
 extern crate rand;
