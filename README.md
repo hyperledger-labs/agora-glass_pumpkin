@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/mikelodder7/glass_pumpkin.svg?branch=master)](https://travis-ci.org/mikelodder7/glass_pumpkin)
 [![Build status](https://ci.appveyor.com/api/projects/status/1htmp82mdvmfjjap?svg=true)](https://ci.appveyor.com/project/mikelodder7/glass-pumpkin)
+[![build status](https://gitlab.com/mikelodder7/glass_pumpkin/badges/master/pipeline.svg)]
 
 
 A random number generator for generating large prime numbers, suitable for cryptography.

@@ -1,0 +1,11 @@
+main-build:
+  stage: build
+  tags:
+    - rust
+  script: "cargo build -v"
+
+main-test:
+  stage: test
+  tags:
+    - rust
+  script: "cargo test --release -v"
