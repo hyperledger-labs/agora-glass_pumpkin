@@ -9,6 +9,3 @@ main-test:
   tags:
     - rust
   script: "cargo test --release -v"
-  artifacts:
-    reports:
-      codequality: coverage.json
