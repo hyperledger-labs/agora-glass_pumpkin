@@ -95,7 +95,7 @@ fn _is_safe_prime(candidate: &BigUint, checks: usize, force2: bool) -> bool {
 
 /// Test if number is prime by
 ///
-/// 1- Trying to divide by first 2048 primes
+/// 1- Trial division by first 2048 primes
 /// 2- Perform a Fermat Test
 /// 3- Perform log2(bitlength) + 5 rounds of Miller-Rabin
 ///    depending on the number of bits

@@ -60,13 +60,15 @@ fn main() {
 
 # Prime Generation
 
-`Primes` are generated similarly to OpenSSL except it applies some recommendations from the [Prime and Prejudice](https://eprint.iacr.org/2018/749.pdf) paper:
+`Primes` are generated similarly to OpenSSL except it applies some recommendations from the [Prime and Prejudice](https://eprint.iacr.org/2018/749.pdf) paper and uses
+the Baliilie-PSW method:
 
 1. Generate a random odd number of a given bit-length.
 1. Divide the candidate by the first 2048 prime numbers. This helps to
     eliminate certain cases that pass Miller-Rabin but are not prime.
 1. Test the candidate with Fermat's Theorem.
-1. Runs log2(bitlength) + 5 Miller-Rabin tests.
+1. Runs log2(bitlength) + 5 Miller-Rabin tests with one of them using generator `2`.
+1. Run lucas test.
 
 Safe primes require (n-1)/2 also be prime.
 
