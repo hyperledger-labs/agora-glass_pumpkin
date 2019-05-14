@@ -2,8 +2,10 @@
 
 use rand::rngs::OsRng;
 
-pub use crate::common::{gen_prime as from_rng, is_prime as check, is_prime_baillie_psw as strong_check};
 use crate::common::MIN_BIT_LENGTH;
+pub use crate::common::{
+    gen_prime as from_rng, is_prime as check, is_prime_baillie_psw as strong_check,
+};
 use crate::error::{Error, Result};
 
 /// Constructs a new prime number with a size of `bit_length` bits.
@@ -23,7 +25,7 @@ pub fn new(bit_length: usize) -> Result {
 
 #[cfg(test)]
 mod tests {
-    use super::{new, check, strong_check};
+    use super::{check, new, strong_check};
 
     #[test]
     fn tests() {

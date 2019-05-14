@@ -1,8 +1,8 @@
 //! Error structs
 
+use crate::common::MIN_BIT_LENGTH;
 use rand;
 use std::{error, fmt, result};
-use crate::common::MIN_BIT_LENGTH;
 
 /// Default result struct
 pub type Result = result::Result<num_bigint::BigUint, Error>;
@@ -13,7 +13,7 @@ pub enum Error {
     /// Handles when the OS Rng fails to initialize
     OsRngInitialization(rand::Error),
     /// Handles when the bit sizes are too small
-    BitLength(usize)
+    BitLength(usize),
 }
 
 impl fmt::Display for Error {
@@ -21,10 +21,12 @@ impl fmt::Display for Error {
         match *self {
             Error::OsRngInitialization(ref err) => {
                 write!(f, "Error initializing OS random number generator: {}", err)
-            },
-            Error::BitLength(length) => {
-                write!(f, "The given bit length is too small; must be at least {}: {}", MIN_BIT_LENGTH, length)
             }
+            Error::BitLength(length) => write!(
+                f,
+                "The given bit length is too small; must be at least {}: {}",
+                MIN_BIT_LENGTH, length
+            ),
         }
     }
 }
@@ -33,7 +35,7 @@ impl error::Error for Error {
     fn description(&self) -> &str {
         match *self {
             Error::OsRngInitialization(ref err) => err.description(),
-            Error::BitLength(_) => "The given bit length was less than 128"
+            Error::BitLength(_) => "The given bit length was less than 128",
         }
     }
 }

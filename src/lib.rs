@@ -1,10 +1,12 @@
-#![deny(warnings,
-        missing_docs,
-        unsafe_code,
-        unused_import_braces,
-        unused_qualifications,
-        trivial_casts,
-        trivial_numeric_casts)]
+#![deny(
+    warnings,
+    missing_docs,
+    unsafe_code,
+    unused_import_braces,
+    unused_qualifications,
+    trivial_casts,
+    trivial_numeric_casts
+)]
 //! A crate for generating large prime numbers, suitable for cryptography.
 //!
 //! `Primes` are generated similarly to OpenSSL except it applies some recommendations from the (Prime and Prejudice)[https://eprint.iacr.org/2018/749.pdf]
@@ -17,8 +19,8 @@
 #[macro_use]
 extern crate lazy_static;
 pub extern crate num_bigint;
-extern crate num_traits;
 extern crate num_integer;
+extern crate num_traits;
 extern crate rand;
 
 mod common;
