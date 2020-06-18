@@ -31,14 +31,7 @@ impl fmt::Display for Error {
     }
 }
 
-impl error::Error for Error {
-    fn description(&self) -> &str {
-        match *self {
-            Error::OsRngInitialization(ref err) => err.description(),
-            Error::BitLength(_) => "The given bit length was less than 128",
-        }
-    }
-}
+impl error::Error for Error {}
 
 impl From<rand::Error> for Error {
     fn from(err: rand::Error) -> Error {

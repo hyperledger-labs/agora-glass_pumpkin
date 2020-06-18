@@ -20,7 +20,7 @@ pub fn gen_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result {
         let mut candidate;
 
         loop {
-            candidate = rng.gen_biguint(bit_length);
+            candidate = rng.gen_biguint(bit_length as u64);
 
             //Set the top two bits and lowest bit
             candidate |= BigUint::one();
@@ -67,17 +67,17 @@ pub fn gen_safe_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result
 
 /// Checks if number is a prime using the Baillie-PSW test
 pub fn is_prime_baillie_psw(candidate: &BigUint) -> bool {
-    _is_prime(candidate, required_checks(candidate.bits()), true) && lucas(candidate)
+    _is_prime(candidate, required_checks(candidate.bits() as usize), true) && lucas(candidate)
 }
 
 /// Checks if number is a safe prime using the Baillie-PSW test
 pub fn is_safe_prime_baillie_psw(candidate: &BigUint) -> bool {
-    _is_safe_prime(candidate, required_checks(candidate.bits()), true) && lucas(&candidate)
+    _is_safe_prime(candidate, required_checks(candidate.bits() as usize), true) && lucas(&candidate)
 }
 
 /// Checks if number is a safe prime
 pub fn is_safe_prime(candidate: &BigUint) -> bool {
-    _is_safe_prime(candidate, required_checks(candidate.bits()), false)
+    _is_safe_prime(candidate, required_checks(candidate.bits() as usize), false)
 }
 
 /// Common function for is_safe_prime
@@ -102,7 +102,7 @@ fn _is_safe_prime(candidate: &BigUint, checks: usize, force2: bool) -> bool {
 /// 3- Perform log2(bitlength) + 5 rounds of Miller-Rabin
 ///    depending on the number of bits
 pub fn is_prime(candidate: &BigUint) -> bool {
-    _is_prime(candidate, required_checks(candidate.bits()), false)
+    _is_prime(candidate, required_checks(candidate.bits() as usize), false)
 }
 
 /// Common function for is_prime
@@ -292,7 +292,7 @@ fn lucas(n: &BigUint) -> bool {
     let mut vk1 = BigUint::from(p);
 
     for i in (0..s.bits()).rev() {
-        if is_bit_set(&s, i) {
+        if is_bit_set(&s, i as usize) {
             // k' = 2k+1
             // V(k') = V(2k+1) = V(k) V(k+1) - P
             let t1 = (&vk * &vk1) + n - p;
@@ -427,7 +427,7 @@ fn jacobi(x: &BigInt, y: &BigInt) -> isize {
 /// Checks if the i-th bit is set
 #[inline]
 fn is_bit_set(x: &BigUint, i: usize) -> bool {
-    if i >= x.bits() {
+    if i >= x.bits() as usize {
         return false;
     }
     let res = x >> i;
