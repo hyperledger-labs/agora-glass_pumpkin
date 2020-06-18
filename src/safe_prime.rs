@@ -18,7 +18,7 @@ pub fn new(bit_length: usize) -> Result {
     if bit_length < MIN_BIT_LENGTH {
         Err(Error::BitLength(bit_length))
     } else {
-        let mut rng = OsRng::new()?;
+        let mut rng = OsRng::default();
         Ok(from_rng(bit_length, &mut rng)?)
     }
 }
