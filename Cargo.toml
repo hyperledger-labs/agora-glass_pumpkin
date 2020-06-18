@@ -10,6 +10,9 @@ documentation = "https://docs.rs/glass_pumpkin"
 homepage = "https://crates.io/crates/glass_pumpkin"
 readme = "README.md"
 
+[badges]
+maintenance = { status = "passively-maintained" }
+
 [dependencies]
 num-bigint = { version = "0.3", features = ["rand"] }
 num-traits = "0.2"
@@ -23,3 +26,6 @@ criterion = "0.2"
 [[bench]]
 name = "gen_safe_prime"
 harness = false
+
+[profile.bench]
+opt-level = 3
