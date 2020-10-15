@@ -21,7 +21,7 @@ than 200ms and safe primes about 10 seconds on modern hardware.
 # Installation
 Add the following to your `Cargo.toml` file:
 ```toml
-glass-pumpkin = "0.4"
+glass_pumpkin = "0.4"
 ```
 
 # Example
