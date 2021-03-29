@@ -26,13 +26,11 @@ glass_pumpkin = "0.4"
 
 # Example
 ```rust
-extern crate glass_pumpkin;
-
 use glass_pumpkin::prime;
 
 fn main() {
-    let p = prime::new(1024);
-    let q = prime::new(1024);
+    let p = prime::new(1024).unwrap();
+    let q = prime::new(1024).unwrap();
 
     let n = p * q;
 
@@ -42,17 +40,13 @@ fn main() {
 
 You can also supply `OsRng` and generate primes from that.
 ```rust
-extern crate glass_pumpkin;
-extern crate rand;
-
 use glass_pumpkin::prime;
-
-use rand::prelude::*;
+use rand::rngs::OsRng;
 
 fn main() {
-    let mut rng = OsRng::new().unwrap();
-    let p = prime::from_rng(1024, &mut rng);
-    let q = prime::from_rng(1024, &mut rng);
+    let mut rng = OsRng;
+    let p = prime::from_rng(1024, &mut rng).unwrap();
+    let q = prime::from_rng(1024, &mut rng).unwrap();
 
     let n = p * q;
     println!("{}", n);
@@ -77,20 +71,17 @@ Safe primes require (n-1)/2 also be prime.
 
 You can use this crate to check numbers for primality.
 ```rust
-extern crate glass_pumpkin;
-extern crate num_bigint;
-
 use glass_pumpkin::prime;
 use glass_pumpkin::safe_prime;
 use num_bigint::BigUint;
 
 fn main() {
 
-    if prime::check(&BigUint::from(5)) {
+    if prime::check(&BigUint::new([5].to_vec())) {
         println!("is prime");
     }
 
-    if safe_prime::check(&BigUint::from(7)) {
+    if safe_prime::check(&BigUint::new([7].to_vec())) {
         println!("is safe prime");
     }
 }
