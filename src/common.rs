@@ -3,10 +3,10 @@ use num_integer::Integer;
 use num_traits::identities::{One, Zero};
 use num_traits::Signed;
 
+use crate::error::{Error, Result};
+use lazy_static::lazy_static;
 use rand::thread_rng;
 use rand::Rng;
-use lazy_static::lazy_static;
-use crate::error::{Error, Result};
 
 pub const MIN_BIT_LENGTH: usize = 128;
 
