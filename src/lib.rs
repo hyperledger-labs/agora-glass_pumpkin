@@ -16,13 +16,6 @@
 //! 3. Test the candidate with Fermat's Theorem.
 //! 4. Runs Baillie-PSW test with log2(bits) + 5 Miller-Rabin tests
 
-#[macro_use]
-extern crate lazy_static;
-pub extern crate num_bigint;
-extern crate num_integer;
-extern crate num_traits;
-extern crate rand;
-
 mod common;
 pub mod error;
 pub mod prime;

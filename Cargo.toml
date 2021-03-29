@@ -9,6 +9,7 @@ repository = "https://github.com/mikelodder7/glass_pumpkin"
 documentation = "https://docs.rs/glass_pumpkin"
 homepage = "https://crates.io/crates/glass_pumpkin"
 readme = "README.md"
+edition = "2018"
 
 [badges]
 maintenance = { status = "passively-maintained" }

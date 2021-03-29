@@ -1,8 +1,4 @@
-#[macro_use]
-extern crate criterion;
-extern crate glass_pumpkin;
-
-use criterion::Criterion;
+use criterion::{criterion_group, criterion_main, Criterion};
 use glass_pumpkin::safe_prime::new;
 
 fn criterion_benchmark(c: &mut Criterion) {
