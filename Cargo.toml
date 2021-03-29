@@ -1,6 +1,6 @@
 [package]
 name = "glass_pumpkin"
-version = "0.4.0"
+version = "0.5.0"
 description = "A cryptographically secure prime number generator based on rust's own num-bigint and num-integer"
 keywords = ["prime", "big", "cryptography", "generator", "number"]
 license = "Apache-2.0"
@@ -11,18 +11,15 @@ homepage = "https://crates.io/crates/glass_pumpkin"
 readme = "README.md"
 edition = "2018"
 
-[badges]
-maintenance = { status = "passively-maintained" }
-
 [dependencies]
-num-bigint = { version = "0.4.0", features = ["rand"] }
-num-traits = "0.2.14"
-num-integer = "0.1.44"
-rand = "0.8.3"
-lazy_static = "1.4.0"
+num-bigint = { version = "0.4", features = ["rand"] }
+num-traits = "0.2"
+num-integer = "0.1"
+rand = "0.8"
+lazy_static = "1.4"
 
 [dev-dependencies]
-criterion = { version = "0.3.4", features = ["html_reports"] }
+criterion = { version = "0.3", features = ["html_reports"] }
 
 [[bench]]
 name = "gen_safe_prime"
