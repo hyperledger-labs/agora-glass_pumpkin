@@ -152,7 +152,10 @@ fn fermat(candidate: &BigUint) -> bool {
 /// Perform miller rabin primality tests
 fn miller_rabin(candidate: &BigUint, mut limit: usize, force2: bool) -> bool {
     // Perform the Miller-Rabin test on the candidate, 'limit' times.
-    let (trials, d) = rewrite(candidate);
+    let (mut trials, d) = rewrite(candidate);
+    if trials < 5 {
+        trials = 5;
+    }
 
     let cand_minus_one = candidate - 1u32;
 
