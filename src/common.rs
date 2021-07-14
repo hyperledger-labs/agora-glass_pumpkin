@@ -35,8 +35,8 @@ pub fn gen_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result {
 /// Constructs a new `SafePrime` with the size of `bit_length` bits, sourced
 /// from an already-initialized `Rng`.
 pub fn gen_safe_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result {
-    let two = BigUint::from(2u8);
-    let three = BigUint::from(3u8);
+    let two = BigUint::from(2_u8);
+    let three = BigUint::from(3_u8);
     if bit_length < MIN_BIT_LENGTH {
         Err(Error::BitLength(bit_length))
     } else {
@@ -84,7 +84,7 @@ pub fn is_safe_prime(candidate: &BigUint) -> bool {
 fn _is_safe_prime(candidate: &BigUint, checks: usize, force2: bool) -> bool {
     // according to https://eprint.iacr.org/2003/186.pdf
     // a safe prime is congruent to 2 mod 3
-    if (candidate % &BigUint::from(3u8)) == BigUint::from(2u8)
+    if (candidate % &BigUint::from(3_u8)) == BigUint::from(2_u8)
         && _is_prime(&candidate, checks, force2)
     {
         // a safe prime satisfies (p-1)/2 is prime. Since a
@@ -107,7 +107,7 @@ pub fn is_prime(candidate: &BigUint) -> bool {
 
 /// Common function for is_prime
 fn _is_prime(candidate: &BigUint, checks: usize, force2: bool) -> bool {
-    if candidate == &BigUint::from(2u8) {
+    if candidate == &BigUint::from(2_u8) {
         return true;
     }
 
@@ -144,7 +144,7 @@ fn required_checks(bits: usize) -> usize {
 fn fermat(candidate: &BigUint) -> bool {
     let random = thread_rng().gen_biguint_range(&BigUint::one(), candidate);
 
-    let result = random.modpow(&(candidate - 1u8), &candidate);
+    let result = random.modpow(&(candidate - 1_u8), &candidate);
 
     result.is_one()
 }
@@ -157,12 +157,12 @@ fn miller_rabin(candidate: &BigUint, mut limit: usize, force2: bool) -> bool {
         trials = 5;
     }
 
-    let cand_minus_one = candidate - 1u32;
+    let cand_minus_one = candidate - 1_u32;
 
     let mut bases = ::std::collections::LinkedList::new();
 
     if force2 {
-        bases.push_back(BigUint::from(2u8));
+        bases.push_back(BigUint::from(2_u8));
         limit -= 1;
     }
 
@@ -193,7 +193,7 @@ fn miller_rabin(candidate: &BigUint, mut limit: usize, force2: bool) -> bool {
 
 /// Compute `d` and `trials`
 fn rewrite(candidate: &BigUint) -> (u64, BigUint) {
-    let mut d = candidate - 1u32;
+    let mut d = candidate - 1_u32;
     let mut trials = 0;
 
     while d.is_odd() {
@@ -212,7 +212,7 @@ fn lucas(n: &BigUint) -> bool {
     // The search is expected to succeed for non-square n after just a few trials.
     // After more than expected failures, check whether n is square
     // (which would cause Jacobi(D, n) = 1 for all D not dividing n).
-    let mut p = 3u64;
+    let mut p = 3_u64;
     let n_int = BigInt::from_biguint(Sign::Plus, n.clone());
 
     loop {
@@ -258,10 +258,10 @@ fn lucas(n: &BigUint) -> bool {
     // We know gcd(n, 2) = 1 because n is odd.
     //
     // Arrange s = (n - Jacobi(Δ, n)) / 2^r = (n+1) / 2^r.
-    let mut s = n + 1u32;
+    let mut s = n + 1_u32;
     let r = trailing_zeros(&s);
     s >>= r;
-    let nm2 = n - 2u32; // n - 2
+    let nm2 = n - 2_u32; // n - 2
 
     // We apply the "almost extra strong" test, which checks the above conditions
     // except for U_s ≡ 0 mod n, which allows us to avoid computing any U_k values.
@@ -291,7 +291,7 @@ fn lucas(n: &BigUint) -> bool {
     //	V(2k+1) = V(k) V(k+1) - P
     //
     // We can therefore start with k=0 and build up to k=s in log₂(s) steps.
-    let mut vk = BigUint::from(2u8);
+    let mut vk = BigUint::from(2_u8);
     let mut vk1 = BigUint::from(p);
 
     for i in (0..s.bits()).rev() {
@@ -315,7 +315,7 @@ fn lucas(n: &BigUint) -> bool {
     }
 
     // Now k=s, so vk = V(s). Check V(s) ≡ ±2 (mod n).
-    if vk == BigUint::from(2u8) || vk == nm2 {
+    if vk == BigUint::from(2_u8) || vk == nm2 {
         // Check U(s) ≡ 0.
         // As suggested by Jacobsen, apply Crandall and Pomerance equation 3.13:
         //
@@ -345,13 +345,13 @@ fn lucas(n: &BigUint) -> bool {
 
         // Optimization: V(k) = 2 is a fixed point for V(k') = V(k)² - 2,
         // so if V(k) = 2, we can stop: we will never find a future V(k) == 0.
-        if vk == BigUint::from(2u8) {
+        if vk == BigUint::from(2_u8) {
             return false;
         }
 
         // k' = 2k
         // V(k') = V(2k) = V(k)² - 2
-        let t1 = (&vk * &vk) - 2u32;
+        let t1 = (&vk * &vk) - 2_u32;
         vk = &t1 % n;
     }
 
@@ -360,7 +360,7 @@ fn lucas(n: &BigUint) -> bool {
 
 /// Returns the number of least-significant bits that are zero
 fn trailing_zeros<B: Clone + Integer + std::ops::ShrAssign<usize>>(n: &B) -> usize {
-    let mut i = 0usize;
+    let mut i = 0_usize;
     let mut t = n.clone();
     while t.is_even() {
         i += 1;
@@ -441,15 +441,15 @@ lazy_static! {
     static ref PRIMES: Vec<BigUint> = gen_primes();
 }
 lazy_static! {
-    static ref TWO: BigUint = BigUint::from(2u8);
+    static ref TWO: BigUint = BigUint::from(2_u8);
 }
 lazy_static! {
-    static ref THREE: BigUint = BigUint::from(3u8);
+    static ref THREE: BigUint = BigUint::from(3_u8);
 }
 
 fn gen_primes() -> Vec<BigUint> {
     [
-        3u32, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89,
+        3_u32, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89,
         97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181,
         191, 193, 197, 199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281,
         283, 293, 307, 311, 313, 317, 331, 337, 347, 349, 353, 359, 367, 373, 379, 383, 389, 397,
@@ -649,12 +649,12 @@ mod tests {
             assert!(is_prime(&prime));
         }
 
-        let mut n = BigUint::from(18088387217903330459u64);
+        let mut n = BigUint::from(18088387217903330459_u64);
         assert!(!is_prime(&(n.clone() >> 1)));
         assert!(is_prime_baillie_psw(&n));
         for _ in 0..5 {
             n <<= 1;
-            n += 1u8;
+            n += 1_u8;
             assert!(is_safe_prime(&n));
             assert!(is_prime_baillie_psw(&n));
         }
@@ -664,7 +664,7 @@ mod tests {
         assert!(is_prime_baillie_psw(&n));
         for _ in 0..5 {
             n <<= 1;
-            n += 1u8;
+            n += 1_u8;
             assert!(is_safe_prime(&n));
         }
 
@@ -673,7 +673,7 @@ mod tests {
         assert!(is_prime_baillie_psw(&n));
         for _ in 0..5 {
             n <<= 1;
-            n += 1u8;
+            n += 1_u8;
             assert!(is_safe_prime(&n));
         }
 
@@ -686,7 +686,7 @@ mod tests {
         assert!(is_prime_baillie_psw(&n));
         for _ in 0..4 {
             n <<= 1;
-            n += 1u8;
+            n += 1_u8;
             assert!(is_safe_prime(&n));
         }
 
@@ -695,7 +695,7 @@ mod tests {
         assert!(is_prime(&n));
         for _ in 0..4 {
             n <<= 1;
-            n += 1u8;
+            n += 1_u8;
             assert!(is_safe_prime(&n));
         }
         n = BigUint::from_str_radix("153739637779647327330155094463476939112913405723627932550795546376536722298275674187199768137486929460478138431076223176750734095693166283451594721829574797878338183845296809008576378039501400850628591798770214582527154641716248943964626446190042367043984306973709604255015629102866732543697075866901827761489", 10).unwrap();
@@ -704,7 +704,7 @@ mod tests {
         assert!(is_prime_baillie_psw(&n));
         for _ in 0..3 {
             n <<= 1;
-            n += 1u8;
+            n += 1_u8;
             assert!(is_safe_prime(&n));
         }
     }
