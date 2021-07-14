@@ -294,10 +294,10 @@ fn lucas(n: &BigUint) -> bool {
     let mut vk1 = BigUint::from(p);
 
     for i in (0..s.bits()).rev() {
+        let t1 = (&vk * &vk1) + n - p;
         if is_bit_set(&s, i as usize) {
             // k' = 2k+1
             // V(k') = V(2k+1) = V(k) V(k+1) - P
-            let t1 = (&vk * &vk1) + n - p;
             vk = &t1 % n;
             // V(k'+1) = V(2k+2) = V(k+1)² - 2
             let t1 = (&vk1 * &vk1) + &nm2;
@@ -305,7 +305,6 @@ fn lucas(n: &BigUint) -> bool {
         } else {
             // k' = 2k
             // V(k'+1) = V(2k+1) = V(k) V(k+1) - P
-            let t1 = (&vk * &vk1) + n - p;
             vk1 = &t1 % n;
             // V(k') = V(2k) = V(k)² - 2
             let t1 = (&vk * &vk) + &nm2;
