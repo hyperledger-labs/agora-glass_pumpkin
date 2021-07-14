@@ -611,10 +611,10 @@ mod tests {
     fn gen_safe_prime_tests() {
         let mut rng = thread_rng();
         match gen_prime(16, &mut rng) {
-            Ok(_) => assert!(false, "No primes allowed under 16 bits"),
+            Ok(_) => panic!("No primes allowed under 16 bits"),
             Err(e) => match e {
                 Error::BitLength(l) => assert_eq!(l, 16),
-                _ => assert!(false, "Unexpected error"),
+                _ => panic!("Unexpected error"),
             },
         };
 
@@ -628,10 +628,10 @@ mod tests {
     fn gen_prime_tests() {
         let mut rng = thread_rng();
         match gen_prime(16, &mut rng) {
-            Ok(_) => assert!(false, "No primes allowed under 16 bits"),
+            Ok(_) => panic!("No primes allowed under 16 bits"),
             Err(e) => match e {
                 Error::BitLength(l) => assert_eq!(l, 16),
-                _ => assert!(false, "Unexpected error"),
+                _ => panic!("Unexpected error"),
             },
         };
 
