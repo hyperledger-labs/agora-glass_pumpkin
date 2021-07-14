@@ -619,7 +619,7 @@ mod tests {
             },
         };
 
-        for bits in [128, 256, 384].iter() {
+        for bits in &[128, 256, 384] {
             let n = gen_safe_prime(*bits, &mut rng).unwrap();
             assert!(is_safe_prime_baillie_psw(&n));
         }
@@ -636,7 +636,7 @@ mod tests {
             },
         };
 
-        for bits in [256, 512, 1024, 2048].iter() {
+        for bits in &[256, 512, 1024, 2048] {
             let n = gen_prime(*bits, &mut rng).unwrap();
             assert!(is_prime(&n));
         }
