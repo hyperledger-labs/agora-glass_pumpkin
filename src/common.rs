@@ -80,7 +80,7 @@ pub fn is_safe_prime(candidate: &BigUint) -> bool {
     _is_safe_prime(candidate, required_checks(candidate.bits() as usize), false)
 }
 
-/// Common function for is_safe_prime
+/// Common function for `is_safe_prime`
 fn _is_safe_prime(candidate: &BigUint, checks: usize, force2: bool) -> bool {
     // according to https://eprint.iacr.org/2003/186.pdf
     // a safe prime is congruent to 2 mod 3
@@ -105,7 +105,7 @@ pub fn is_prime(candidate: &BigUint) -> bool {
     _is_prime(candidate, required_checks(candidate.bits() as usize), false)
 }
 
-/// Common function for is_prime
+/// Common function for `is_prime`
 fn _is_prime(candidate: &BigUint, checks: usize, force2: bool) -> bool {
     if candidate == &BigUint::from(2_u8) {
         return true;
