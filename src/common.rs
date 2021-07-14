@@ -649,7 +649,7 @@ mod tests {
             assert!(is_prime(&prime));
         }
 
-        let mut n = BigUint::from(18088387217903330459_u64);
+        let mut n = BigUint::from(18_088_387_217_903_330_459_u64);
         assert!(!is_prime(&(n.clone() >> 1)));
         assert!(is_prime_baillie_psw(&n));
         for _ in 0..5 {
