@@ -46,7 +46,7 @@ pub fn gen_safe_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result
         loop {
             candidate = gen_prime(bit_length, rng)?;
 
-            if _is_safe_prime(&candidate, checks, true) && lucas(&candidate) {
+            if (&candidate % &three) == two && _is_prime(&(&candidate >> 1), checks, true) {
                 break;
             }
 
@@ -72,7 +72,7 @@ pub fn is_prime_baillie_psw(candidate: &BigUint) -> bool {
 
 /// Checks if number is a safe prime using the Baillie-PSW test
 pub fn is_safe_prime_baillie_psw(candidate: &BigUint) -> bool {
-    _is_safe_prime(candidate, required_checks(candidate.bits() as usize), true) && lucas(&candidate)
+    _is_safe_prime(candidate, required_checks(candidate.bits() as usize), true) && lucas(candidate)
 }
 
 /// Checks if number is a safe prime
@@ -85,7 +85,7 @@ fn _is_safe_prime(candidate: &BigUint, checks: usize, force2: bool) -> bool {
     // according to https://eprint.iacr.org/2003/186.pdf
     // a safe prime is congruent to 2 mod 3
     if (candidate % &BigUint::from(3_u8)) == BigUint::from(2_u8)
-        && _is_prime(&candidate, checks, force2)
+        && _is_prime(candidate, checks, force2)
     {
         // a safe prime satisfies (p-1)/2 is prime. Since a
         // prime is odd, We just need to divide by 2
@@ -144,7 +144,7 @@ fn required_checks(bits: usize) -> usize {
 fn fermat(candidate: &BigUint) -> bool {
     let random = thread_rng().gen_biguint_range(&BigUint::one(), candidate);
 
-    let result = random.modpow(&(candidate - 1_u8), &candidate);
+    let result = random.modpow(&(candidate - 1_u8), candidate);
 
     result.is_one()
 }
@@ -171,13 +171,13 @@ fn miller_rabin(candidate: &BigUint, mut limit: usize, force2: bool) -> bool {
     }
 
     'nextbasis: for basis in bases {
-        let mut test = basis.modpow(&d, &candidate);
+        let mut test = basis.modpow(&d, candidate);
 
         if test.is_one() || test == cand_minus_one {
             continue;
         }
         for _ in 1..trials - 1 {
-            test = test.modpow(&TWO, &candidate);
+            test = test.modpow(&TWO, candidate);
             if test.is_one() {
                 return false;
             } else if test == cand_minus_one {
@@ -644,7 +644,7 @@ mod tests {
     #[test]
     fn is_prime_tests() {
         for prime in PRIMES.iter() {
-            assert!(is_prime(&prime));
+            assert!(is_prime(prime));
         }
 
         let mut n = BigUint::from(18_088_387_217_903_330_459_u64);

@@ -13,7 +13,7 @@ use crate::error::{Error, Result};
 /// This will initialize an `OsRng` instance and call the
 /// `from_rng()` function.
 ///
-/// Note: the `bit_length` MUST be at least 512-bits.
+/// Note: the `bit_length` MUST be at least 128-bits.
 pub fn new(bit_length: usize) -> Result {
     if bit_length < MIN_BIT_LENGTH {
         Err(Error::BitLength(bit_length))
