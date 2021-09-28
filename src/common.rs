@@ -18,12 +18,17 @@ pub fn gen_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result {
     } else {
         let checks = required_checks(bit_length);
         let mut candidate;
+        let size = bit_length as u64;
 
         loop {
             candidate = rng.gen_biguint(bit_length as u64);
 
-            //Set the top two bits and lowest bit
+            //Set lowest bit
             candidate |= BigUint::one();
+            while candidate.bits() < size {
+                candidate <<= 1;
+                candidate |= BigUint::one();
+            }
 
             if _is_prime(&candidate, checks, true) && lucas(&candidate) {
                 return Ok(candidate);
@@ -47,16 +52,6 @@ pub fn gen_safe_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result
             candidate = gen_prime(bit_length, rng)?;
 
             if (&candidate % &three) == two && _is_prime(&(&candidate >> 1), checks, true) {
-                break;
-            }
-
-            candidate <<= 1_usize;
-            candidate += 1_usize;
-
-            if (&candidate % &three) == two
-                && _is_prime(&candidate, checks, false)
-                && lucas(&candidate)
-            {
                 break;
             }
         }
@@ -618,9 +613,10 @@ mod tests {
             },
         };
 
-        for bits in &[128, 256, 384] {
+        for bits in &[128, 256, 384, 512] {
             let n = gen_safe_prime(*bits, &mut rng).unwrap();
             assert!(is_safe_prime_baillie_psw(&n));
+            assert_eq!(n.bits() as usize, *bits);
         }
     }
 
@@ -638,6 +634,7 @@ mod tests {
         for bits in &[256, 512, 1024, 2048] {
             let n = gen_prime(*bits, &mut rng).unwrap();
             assert!(is_prime(&n));
+            assert_eq!(n.bits() as usize, *bits);
         }
     }
 
