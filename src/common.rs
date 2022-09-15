@@ -4,6 +4,7 @@ use num_traits::identities::{One, Zero};
 use num_traits::Signed;
 
 use crate::error::{Error, Result};
+use crate::rand::Randoms;
 use lazy_static::lazy_static;
 use rand::thread_rng;
 use rand::Rng;
@@ -145,7 +146,7 @@ fn fermat(candidate: &BigUint) -> bool {
 }
 
 /// Perform miller rabin primality tests
-fn miller_rabin(candidate: &BigUint, mut limit: usize, force2: bool) -> bool {
+fn miller_rabin(candidate: &BigUint, limit: usize, force2: bool) -> bool {
     // Perform the Miller-Rabin test on the candidate, 'limit' times.
     let (mut trials, d) = rewrite(candidate);
     if trials < 5 {
@@ -154,16 +155,13 @@ fn miller_rabin(candidate: &BigUint, mut limit: usize, force2: bool) -> bool {
 
     let cand_minus_one = candidate - 1_u32;
 
-    let mut bases = ::std::collections::LinkedList::new();
-
-    if force2 {
-        bases.push_back(BigUint::from(2_u8));
-        limit -= 1;
-    }
-
-    for _ in 0..limit {
-        bases.push_front(thread_rng().gen_biguint_range(&TWO, candidate));
-    }
+    let two = (*TWO).clone();
+    let bases = Randoms::new(two, candidate.clone(), limit, thread_rng());
+    let bases = if force2 {
+        bases.with_appended(BigUint::from(2_u8))
+    } else {
+        bases
+    };
 
     'nextbasis: for basis in bases {
         let mut test = basis.modpow(&d, candidate);
