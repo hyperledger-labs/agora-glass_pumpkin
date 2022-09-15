@@ -20,4 +20,5 @@
 mod common;
 pub mod error;
 pub mod prime;
+mod rand;
 pub mod safe_prime;
