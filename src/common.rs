@@ -41,8 +41,8 @@ pub fn gen_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result {
 /// Constructs a new `SafePrime` with the size of `bit_length` bits, sourced
 /// from an already-initialized `Rng`.
 pub fn gen_safe_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result {
-    let two = BigUint::from(2_u8);
-    let three = BigUint::from(3_u8);
+    let two = (*TWO).clone();
+    let three = (*THREE).clone();
     if bit_length < MIN_BIT_LENGTH {
         Err(Error::BitLength(bit_length))
     } else {
@@ -158,7 +158,7 @@ fn miller_rabin(candidate: &BigUint, limit: usize, force2: bool) -> bool {
     let two = (*TWO).clone();
     let bases = Randoms::new(two, candidate.clone(), limit, thread_rng());
     let bases = if force2 {
-        bases.with_appended(BigUint::from(2_u8))
+        bases.with_appended(TWO.clone())
     } else {
         bases
     };
@@ -283,7 +283,7 @@ fn lucas(n: &BigUint) -> bool {
     //	V(2k+1) = V(k) V(k+1) - P
     //
     // We can therefore start with k=0 and build up to k=s in log₂(s) steps.
-    let mut vk = BigUint::from(2_u8);
+    let mut vk = (*TWO).clone();
     let mut vk1 = BigUint::from(p);
 
     for i in (0..s.bits()).rev() {
@@ -306,7 +306,7 @@ fn lucas(n: &BigUint) -> bool {
     }
 
     // Now k=s, so vk = V(s). Check V(s) ≡ ±2 (mod n).
-    if vk == BigUint::from(2_u8) || vk == nm2 {
+    if vk == *TWO || vk == nm2 {
         // Check U(s) ≡ 0.
         // As suggested by Jacobsen, apply Crandall and Pomerance equation 3.13:
         //
@@ -336,7 +336,7 @@ fn lucas(n: &BigUint) -> bool {
 
         // Optimization: V(k) = 2 is a fixed point for V(k') = V(k)² - 2,
         // so if V(k) = 2, we can stop: we will never find a future V(k) == 0.
-        if vk == BigUint::from(2_u8) {
+        if vk == *TWO {
             return false;
         }
 
