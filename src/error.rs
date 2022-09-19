@@ -1,8 +1,9 @@
 //! Error structs
 
 use crate::common::MIN_BIT_LENGTH;
+use core::{fmt, result};
+use core2::error;
 use rand;
-use std::{error, fmt, result};
 
 /// Default result struct
 pub type Result = result::Result<num_bigint::BigUint, Error>;

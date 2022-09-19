@@ -318,7 +318,7 @@ fn lucas(n: &BigUint) -> bool {
         let mut t2 = &vk1 << 1;
 
         if t1 < t2 {
-            std::mem::swap(&mut t1, &mut t2);
+            core::mem::swap(&mut t1, &mut t2);
         }
 
         t1 -= t2;
@@ -350,7 +350,7 @@ fn lucas(n: &BigUint) -> bool {
 }
 
 /// Returns the number of least-significant bits that are zero
-fn trailing_zeros<B: Clone + Integer + std::ops::ShrAssign<usize>>(n: &B) -> usize {
+fn trailing_zeros<B: Clone + Integer + core::ops::ShrAssign<usize>>(n: &B) -> usize {
     let mut i = 0_usize;
     let mut t = n.clone();
     while t.is_even() {
