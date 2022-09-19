@@ -318,7 +318,7 @@ fn lucas(n: &BigUint) -> bool {
         let mut t2 = &vk1 << 1;
 
         if t1 < t2 {
-            ::std::mem::swap(&mut t1, &mut t2);
+            std::mem::swap(&mut t1, &mut t2);
         }
 
         t1 -= t2;
