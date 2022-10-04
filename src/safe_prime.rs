@@ -29,10 +29,11 @@ mod tests {
 
     #[test]
     fn tests() {
+        let mut rng = rand::thread_rng();
         for bits in &[128, 256, 384] {
             let n = new(*bits).unwrap();
-            assert!(check(&n));
-            assert!(strong_check(&n));
+            assert!(check(&n, &mut rng));
+            assert!(strong_check(&n, &mut rng));
         }
     }
 }

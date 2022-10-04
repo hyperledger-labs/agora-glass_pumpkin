@@ -16,11 +16,12 @@ core2 = "0.4"
 num-bigint = { version = "0.4", features = ["rand"] }
 num-traits = "0.2"
 num-integer = "0.1"
-rand = "0.8"
+rand = { version = "0.8", default-features = false }
 lazy_static = "1.4"
 
 [dev-dependencies]
 criterion = { version = "0.4", features = ["html_reports"] }
+rand = { version = "0.8", default-features = true }
 
 [[bench]]
 name = "gen_safe_prime"
