@@ -6,13 +6,13 @@ use num_traits::Signed;
 use crate::error::{Error, Result};
 use crate::rand::Randoms;
 use lazy_static::lazy_static;
-use rand::Rng;
+use rand_core::RngCore;
 
 pub const MIN_BIT_LENGTH: usize = 128;
 
 /// Create a new prime number with size `bit_length` sourced
-/// from an already-initialized `Rng`
-pub fn gen_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result {
+/// from an already-initialized `RngCore`
+pub fn gen_prime<R: RngCore + ?Sized>(bit_length: usize, rng: &mut R) -> Result {
     if bit_length < MIN_BIT_LENGTH {
         Err(Error::BitLength(bit_length))
     } else {
@@ -38,8 +38,8 @@ pub fn gen_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result {
 }
 
 /// Constructs a new `SafePrime` with the size of `bit_length` bits, sourced
-/// from an already-initialized `Rng`.
-pub fn gen_safe_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result {
+/// from an already-initialized `RngCore`.
+pub fn gen_safe_prime<R: RngCore + ?Sized>(bit_length: usize, rng: &mut R) -> Result {
     let two = (*TWO).clone();
     let three = (*THREE).clone();
     if bit_length < MIN_BIT_LENGTH {
@@ -61,7 +61,7 @@ pub fn gen_safe_prime<R: Rng + ?Sized>(bit_length: usize, rng: &mut R) -> Result
 }
 
 /// Checks if number is a prime using the Baillie-PSW test
-pub fn is_prime_baillie_psw<R: Rng + ?Sized>(candidate: &BigUint, rng: &mut R) -> bool {
+pub fn is_prime_baillie_psw<R: RngCore + ?Sized>(candidate: &BigUint, rng: &mut R) -> bool {
     _is_prime(
         candidate,
         required_checks(candidate.bits() as usize),
@@ -71,7 +71,7 @@ pub fn is_prime_baillie_psw<R: Rng + ?Sized>(candidate: &BigUint, rng: &mut R) -
 }
 
 /// Checks if number is a safe prime using the Baillie-PSW test
-pub fn is_safe_prime_baillie_psw<R: Rng + ?Sized>(candidate: &BigUint, rng: &mut R) -> bool {
+pub fn is_safe_prime_baillie_psw<R: RngCore + ?Sized>(candidate: &BigUint, rng: &mut R) -> bool {
     _is_safe_prime(
         candidate,
         required_checks(candidate.bits() as usize),
@@ -81,7 +81,7 @@ pub fn is_safe_prime_baillie_psw<R: Rng + ?Sized>(candidate: &BigUint, rng: &mut
 }
 
 /// Checks if number is a safe prime
-pub fn is_safe_prime<R: Rng + ?Sized>(candidate: &BigUint, rng: &mut R) -> bool {
+pub fn is_safe_prime<R: RngCore + ?Sized>(candidate: &BigUint, rng: &mut R) -> bool {
     _is_safe_prime(
         candidate,
         required_checks(candidate.bits() as usize),
@@ -91,7 +91,7 @@ pub fn is_safe_prime<R: Rng + ?Sized>(candidate: &BigUint, rng: &mut R) -> bool 
 }
 
 /// Common function for `is_safe_prime`
-fn _is_safe_prime<R: Rng + ?Sized>(
+fn _is_safe_prime<R: RngCore + ?Sized>(
     candidate: &BigUint,
     checks: usize,
     force2: bool,
@@ -116,7 +116,7 @@ fn _is_safe_prime<R: Rng + ?Sized>(
 /// 2- Perform a Fermat Test
 /// 3- Perform log2(bitlength) + 5 rounds of Miller-Rabin
 ///    depending on the number of bits
-pub fn is_prime<R: Rng + ?Sized>(candidate: &BigUint, rng: &mut R) -> bool {
+pub fn is_prime<R: RngCore + ?Sized>(candidate: &BigUint, rng: &mut R) -> bool {
     _is_prime(
         candidate,
         required_checks(candidate.bits() as usize),
@@ -126,7 +126,7 @@ pub fn is_prime<R: Rng + ?Sized>(candidate: &BigUint, rng: &mut R) -> bool {
 }
 
 /// Common function for `is_prime`
-fn _is_prime<R: Rng + ?Sized>(
+fn _is_prime<R: RngCore + ?Sized>(
     candidate: &BigUint,
     checks: usize,
     force2: bool,
@@ -166,7 +166,7 @@ fn required_checks(bits: usize) -> usize {
 
 /// Perform Fermat's little theorem on the candidate to determine probable
 /// primality.
-fn fermat<R: Rng + ?Sized>(candidate: &BigUint, rng: &mut R) -> bool {
+fn fermat<R: RngCore + ?Sized>(candidate: &BigUint, rng: &mut R) -> bool {
     let random = rng.gen_biguint_range(&BigUint::one(), candidate);
 
     let result = random.modpow(&(candidate - 1_u8), candidate);
@@ -175,7 +175,7 @@ fn fermat<R: Rng + ?Sized>(candidate: &BigUint, rng: &mut R) -> bool {
 }
 
 /// Perform miller rabin primality tests
-fn miller_rabin<R: Rng + ?Sized>(
+fn miller_rabin<R: RngCore + ?Sized>(
     candidate: &BigUint,
     limit: usize,
     force2: bool,
