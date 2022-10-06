@@ -3,7 +3,6 @@
 use crate::common::MIN_BIT_LENGTH;
 use core::{fmt, result};
 use core2::error;
-use rand;
 
 /// Default result struct
 pub type Result = result::Result<num_bigint::BigUint, Error>;
@@ -12,7 +11,7 @@ pub type Result = result::Result<num_bigint::BigUint, Error>;
 #[derive(Debug)]
 pub enum Error {
     /// Handles when the OS Rng fails to initialize
-    OsRngInitialization(rand::Error),
+    OsRngInitialization(rand_core::Error),
     /// Handles when the bit sizes are too small
     BitLength(usize),
 }
@@ -34,8 +33,8 @@ impl fmt::Display for Error {
 
 impl error::Error for Error {}
 
-impl From<rand::Error> for Error {
-    fn from(err: rand::Error) -> Error {
+impl From<rand_core::Error> for Error {
+    fn from(err: rand_core::Error) -> Error {
         Error::OsRngInitialization(err)
     }
 }

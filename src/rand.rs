@@ -1,5 +1,5 @@
 use num_bigint::{BigUint, RandBigInt};
-use rand::Rng;
+use rand_core::RngCore;
 
 /// Iterator to generate a given amount of random numbers. For convenience of
 /// use with miller_rabin tests, you can also append a specified number at the
@@ -12,7 +12,7 @@ pub struct Randoms<R> {
     rng: R,
 }
 
-impl<R: Rng> Randoms<R> {
+impl<R: RngCore> Randoms<R> {
     pub fn new(lower_limit: BigUint, upper_limit: BigUint, amount: usize, rng: R) -> Self {
         Self {
             appended: None,
@@ -37,7 +37,7 @@ impl<R: Rng> Randoms<R> {
     }
 }
 
-impl<R: Rng> Iterator for Randoms<R> {
+impl<R: RngCore> Iterator for Randoms<R> {
     type Item = BigUint;
 
     fn next(&mut self) -> Option<Self::Item> {

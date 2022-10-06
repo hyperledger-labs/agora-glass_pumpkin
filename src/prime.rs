@@ -1,6 +1,6 @@
 //! Generates cryptographically secure prime numbers.
 
-use rand::rngs::OsRng;
+use rand_core::OsRng;
 
 use crate::common::MIN_BIT_LENGTH;
 pub use crate::common::{
