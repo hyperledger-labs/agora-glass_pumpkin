@@ -4,7 +4,7 @@ use rand_core::OsRng;
 
 use crate::common::MIN_BIT_LENGTH;
 pub use crate::common::{
-    gen_prime as from_rng, is_prime as check, is_prime_baillie_psw as strong_check,
+    gen_prime as from_rng, is_prime, is_prime_baillie_psw,
 };
 use crate::error::{Error, Result};
 
@@ -23,17 +23,31 @@ pub fn new(bit_length: usize) -> Result {
     }
 }
 
+/// Test if number is prime by
+///
+/// 1- Trial division by first 2048 primes
+/// 2- Perform a Fermat Test
+/// 3- Perform log2(bitlength) + 5 rounds of Miller-Rabin
+///    depending on the number of bits
+pub fn check(candidate: &num_bigint::BigUint) -> bool {
+    is_prime(candidate, &mut OsRng::default())
+}
+
+/// Checks if number is a prime using the Baillie-PSW test
+pub fn strong_check(candidate: &num_bigint::BigUint) -> bool {
+    is_prime_baillie_psw(candidate, &mut OsRng::default())
+}
+
 #[cfg(test)]
 mod tests {
     use super::{check, new, strong_check};
 
     #[test]
     fn tests() {
-        let mut rng = rand::thread_rng();
         for bits in &[128, 256, 512, 1024] {
             let n = new(*bits).unwrap();
-            assert!(check(&n, &mut rng));
-            assert!(strong_check(&n, &mut rng));
+            assert!(check(&n));
+            assert!(strong_check(&n));
         }
     }
 }
