@@ -4,7 +4,7 @@ use rand_core::OsRng;
 
 use crate::common::MIN_BIT_LENGTH;
 pub use crate::common::{
-    gen_safe_prime as from_rng, is_safe_prime, is_safe_prime_baillie_psw,
+    gen_safe_prime as from_rng, is_safe_prime as check_with, is_safe_prime_baillie_psw as strong_check_with,
 };
 use crate::error::{Error, Result};
 
@@ -25,12 +25,12 @@ pub fn new(bit_length: usize) -> Result {
 
 /// Checks if number is a safe prime
 pub fn check(candidate: &num_bigint::BigUint) -> bool {
-    is_safe_prime(candidate, &mut OsRng::default())
+    check_with(candidate, &mut OsRng::default())
 }
 
 /// Checks if number is a safe prime using the Baillie-PSW test
 pub fn strong_check(candidate: &num_bigint::BigUint) -> bool {
-    is_safe_prime_baillie_psw(candidate, &mut OsRng::default())
+    strong_check_with(candidate, &mut OsRng::default())
 }
 
 #[cfg(test)]
