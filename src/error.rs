@@ -1,11 +1,12 @@
 //! Error structs
+use crypto_bigint::UInt;
 
 use crate::common::MIN_BIT_LENGTH;
 use core::{fmt, result};
 use core2::error;
 
 /// Default result struct
-pub type Result = result::Result<num_bigint::BigUint, Error>;
+pub type Result<const L: usize> = result::Result<UInt<L>, Error>;
 
 /// Error struct
 #[derive(Debug)]

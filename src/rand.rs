@@ -1,23 +1,26 @@
-use num_bigint::{BigUint, RandBigInt};
-use rand_core::RngCore;
+use crypto_bigint::{NonZero, RandomMod, UInt};
+use rand_core::{CryptoRng, RngCore};
 
 /// Iterator to generate a given amount of random numbers. For convenience of
 /// use with miller_rabin tests, you can also append a specified number at the
 /// end of the generated stream.
-pub struct Randoms<R> {
-    appended: Option<BigUint>,
-    lower_limit: BigUint,
-    upper_limit: BigUint,
+pub(crate) struct Randoms<R, const L: usize> {
+    appended: Option<UInt<L>>,
+    lower_limit: UInt<L>,
+    range: NonZero<UInt<L>>,
     amount: usize,
     rng: R,
 }
 
-impl<R: RngCore> Randoms<R> {
-    pub fn new(lower_limit: BigUint, upper_limit: BigUint, amount: usize, rng: R) -> Self {
+impl<R: CryptoRng + RngCore, const L: usize> Randoms<R, L> {
+    pub(crate) fn new(lower_limit: &UInt<L>, upper_limit: &UInt<L>, amount: usize, rng: R) -> Self {
+        // TODO: fail if upper_limit <= lower_limit?
+        let range = upper_limit.wrapping_sub(lower_limit);
+        let range_nonzero = NonZero::new(range).unwrap();
         Self {
             appended: None,
-            lower_limit,
-            upper_limit,
+            lower_limit: *lower_limit,
+            range: range_nonzero,
             amount,
             rng,
         }
@@ -26,19 +29,19 @@ impl<R: RngCore> Randoms<R> {
     /// Append the number at the end to appear as if it was generated. This
     /// doesn't affect stream length. Only one number can be appended,
     /// subsequent calls will replace the previously appended number.
-    pub fn with_appended(mut self, x: BigUint) -> Self {
+    pub(crate) fn with_appended(mut self, x: UInt<L>) -> Self {
         self.appended = Some(x);
         self
     }
 
-    fn gen_biguint(&mut self) -> BigUint {
-        self.rng
-            .gen_biguint_range(&self.lower_limit, &self.upper_limit)
+    fn gen_biguint(&mut self) -> UInt<L> {
+        let random = UInt::<L>::random_mod(&mut self.rng, &self.range);
+        random.wrapping_add(&self.lower_limit)
     }
 }
 
-impl<R: RngCore> Iterator for Randoms<R> {
-    type Item = BigUint;
+impl<R: CryptoRng + RngCore, const L: usize> Iterator for Randoms<R, L> {
+    type Item = UInt<L>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.amount == 0 {
@@ -60,17 +63,18 @@ impl<R: RngCore> Iterator for Randoms<R> {
 #[cfg(test)]
 mod test {
     use super::Randoms;
+    use crypto_bigint::U256;
     use rand::thread_rng;
 
     #[test]
     fn generate_amount_test() {
         let amount = 3;
-        let rands = Randoms::new(0_u8.into(), 1_u8.into(), amount, thread_rng());
+        let rands = Randoms::new(&U256::ZERO, &U256::ONE, amount, thread_rng());
         let generated = rands.collect::<Vec<_>>();
         assert_eq!(generated.len(), amount);
 
-        let rands =
-            Randoms::new(0_u8.into(), 1_u8.into(), amount, thread_rng()).with_appended(2_u8.into());
+        let rands = Randoms::new(&U256::ZERO, &U256::ONE, amount, thread_rng())
+            .with_appended(U256::from(2u32));
         let generated = rands.collect::<Vec<_>>();
         assert_eq!(generated.len(), amount);
     }

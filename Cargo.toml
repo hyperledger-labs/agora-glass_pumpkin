@@ -13,9 +13,7 @@ edition = "2021"
 
 [dependencies]
 core2 = "0.4"
-num-bigint = { version = "0.4", features = ["rand"] }
-num-traits = "0.2"
-num-integer = "0.1"
+crypto-bigint = { git = "https://github.com/RustCrypto/crypto-bigint", branch = "master", features = ["rand"] }
 rand_core = { version = "0.6", features = ["getrandom"] }
 lazy_static = "1.4"
 
