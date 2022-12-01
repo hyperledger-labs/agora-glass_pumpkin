@@ -189,6 +189,51 @@ fn required_checks(bits: usize) -> usize {
     ((bits as f64).log2() as usize) + 5
 }
 
+fn modpow_low_level<const L: usize>(
+    x: &UInt<L>,
+    y: &UInt<L>,
+    params: &DynResidueParams<L>,
+) -> DynResidue<L> {
+    let x_m = DynResidue::<L>::new(*x, *params);
+    let one_m = DynResidue::<L>::new(UInt::<L>::ONE, *params);
+
+    const WINDOW: usize = 4usize;
+
+    // powers[i] contains x^i
+    let mut powers = [one_m; 1 << WINDOW];
+    powers[1] = x_m;
+    for i in 2..powers.len() {
+        powers[i] = powers[i - 1].mul(&x_m);
+    }
+
+    // initialize z = 1 (Montgomery 1)
+    let mut z = one_m;
+
+    // same windowed exponent, but with Montgomery multiplications
+    for (i, yi) in y.limbs().iter().enumerate().rev() {
+        let mut j = 0;
+        let mut w = yi.0;
+        while j < Limb::BIT_SIZE {
+            if i != L - 1 || j != 0 {
+                for _ in 0..WINDOW {
+                    z = z.square();
+                }
+            }
+            z = z.mul(&powers[(w >> (Limb::BIT_SIZE - WINDOW)) as usize]);
+            w <<= WINDOW;
+            j += WINDOW;
+        }
+    }
+
+    z
+}
+
+fn modpow<const L: usize>(x: &UInt<L>, y: &UInt<L>, m: &UInt<L>) -> UInt<L> {
+    let params = DynResidueParams::<L>::new(*m);
+    let z = modpow_low_level(x, y, &params);
+    z.retrieve()
+}
+
 /// Perform Fermat's little theorem on the candidate to determine probable
 /// primality.
 fn fermat<const L: usize, R: CryptoRng + RngCore + ?Sized>(
@@ -198,8 +243,7 @@ fn fermat<const L: usize, R: CryptoRng + RngCore + ?Sized>(
     let cand_minus_one = candidate.wrapping_sub(&UInt::<L>::ONE);
     let random = UInt::<L>::random_mod(rng, &NonZero::new(cand_minus_one).unwrap())
         .wrapping_add(&UInt::<L>::ONE);
-    let residue = DynResidue::<L>::new(random, DynResidueParams::<L>::new(*candidate));
-    let result = residue.pow(&cand_minus_one).retrieve();
+    let result = modpow(&random, &cand_minus_one, candidate);
 
     result == UInt::<L>::ONE
 }
@@ -227,20 +271,21 @@ fn miller_rabin<const L: usize, R: CryptoRng + RngCore + ?Sized>(
         bases
     };
 
-    'nextbasis: for basis in bases {
-        let basis_r = DynResidue::<L>::new(basis, DynResidueParams::<L>::new(*candidate));
-        let mut test_r = basis_r.pow(&d);
-        let test = test_r.retrieve();
+    let params = DynResidueParams::<L>::new(*candidate);
+    let one_m = DynResidue::<L>::new(UInt::<L>::ONE, params);
+    let cand_minus_one_m = DynResidue::<L>::new(cand_minus_one, params);
 
-        if test == UInt::<L>::ONE || test == cand_minus_one {
+    'nextbasis: for basis in bases {
+        let mut test_m = modpow_low_level(&basis, &d, &params);
+
+        if test_m == one_m || test_m == cand_minus_one_m {
             continue;
         }
         for _ in 1..trials - 1 {
-            test_r = test_r.mul(&test_r);
-            let test = test_r.retrieve();
-            if test == UInt::<L>::ONE {
+            test_m = test_m.square();
+            if test_m == one_m {
                 return false;
-            } else if test == cand_minus_one {
+            } else if test_m == cand_minus_one_m {
                 break 'nextbasis;
             }
         }
