@@ -5,7 +5,7 @@ use num_traits::Signed;
 
 use crate::error::{Error, Result};
 use crate::rand::Randoms;
-use lazy_static::lazy_static;
+use once_cell::sync::Lazy;
 use rand_core::RngCore;
 
 pub const MIN_BIT_LENGTH: usize = 128;
@@ -462,15 +462,9 @@ fn is_bit_set(x: &BigUint, i: usize) -> bool {
     res.is_odd()
 }
 
-lazy_static! {
-    static ref PRIMES: Vec<BigUint> = gen_primes();
-}
-lazy_static! {
-    static ref TWO: BigUint = BigUint::from(2_u8);
-}
-lazy_static! {
-    static ref THREE: BigUint = BigUint::from(3_u8);
-}
+static PRIMES: Lazy<Vec<BigUint>> = Lazy::new(|| gen_primes());
+static TWO: Lazy<BigUint> = Lazy::new(|| BigUint::from(2_u8));
+static THREE: Lazy<BigUint> = Lazy::new(|| BigUint::from(3_u8));
 
 fn gen_primes() -> Vec<BigUint> {
     [
