@@ -5,7 +5,7 @@
 repository:
   name: agora-glass_pumpkin
   description: agora-glass_pumpkin
-  homepage: https://wiki.hyperledger-labs.org/display/agora
+  homepage: https://wiki.hyperledger.org/display/labs/Agora
   default_branch: main
   has_downloads: false
   has_issues: true
